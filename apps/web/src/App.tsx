@@ -1,4 +1,6 @@
 import { useState, type ReactNode } from "react";
+import type { User } from "@milestone/shared";
+import { AuthScreen } from "./components/AuthScreen";
 import { DayCard } from "./components/DayCard";
 import { FilterBar } from "./components/FilterBar";
 import { MetroMap } from "./components/MetroMap";
@@ -12,14 +14,39 @@ import {
   planStats,
 } from "./lib/progress";
 import { dayMatches, NO_FILTERS, type Filters } from "./lib/filters";
-import { usePlan, usePlanEditor, usePlans, useToggleTask } from "./lib/queries";
+import {
+  useLogout,
+  useMe,
+  usePlan,
+  usePlanEditor,
+  usePlans,
+  useToggleTask,
+} from "./lib/queries";
 
+// The gate: ask the API who we are, then show the login screen or the app.
 export function App() {
+  const me = useMe();
+  if (me.isPending) return <Message>Loading…</Message>;
+  if (me.error) {
+    return (
+      <Message>
+        Couldn't reach the API: {me.error.message}. Is <code>npm run dev</code>{" "}
+        running?
+      </Message>
+    );
+  }
+  if (!me.data) return <AuthScreen />;
+  // key: a different user gets a completely fresh PlanPage (no leftover state)
+  return <PlanPage key={me.data.id} user={me.data} />;
+}
+
+function PlanPage({ user }: { user: User }) {
   const plans = usePlans();
   const planId = plans.data?.[0]?.id; // one plan per user for now
   const plan = usePlan(planId);
   const toggleTask = useToggleTask(planId ?? "");
   const editor = usePlanEditor(planId ?? "");
+  const logout = useLogout();
 
   // Which days are expanded. null = "not touched yet" → only today is open.
   // (Hooks must run on every render, so this lives above the early returns.)
@@ -39,11 +66,7 @@ export function App() {
     );
   }
   if (!plan.data) {
-    return (
-      <Message>
-        No plan yet. Run <code>npm run db:seed</code> to load the 60-day plan.
-      </Message>
-    );
+    return <Message>You don't have a plan yet.</Message>;
   }
 
   const data = plan.data;
@@ -95,6 +118,16 @@ export function App() {
               <h1 className="text-[clamp(30px,5vw,48px)] leading-[1.05] font-extrabold text-balance">
                 {data.title}
               </h1>
+              <p className="mt-1 text-sm text-mute">
+                Signed in as {user.email} ·{" "}
+                <button
+                  type="button"
+                  onClick={() => logout.mutate()}
+                  className="cursor-pointer font-semibold text-accent underline"
+                >
+                  Log out
+                </button>
+              </p>
               <p className="mt-2 text-mute">
                 Today is <b className="text-ink">Day {today + 1}</b> of{" "}
                 {data.days.length} ·{" "}
