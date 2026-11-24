@@ -105,6 +105,24 @@ Context for Claude Code, so we can continue where the chat left off.
   - Not ported from the prototype on purpose: localStorage backup/restore code (data now
     lives in Postgres); renaming phases (no phases endpoint yet; add if wanted).
 
+- Milestone 6 built on branch `feat/auth`:
+  - Argon2id via `@node-rs/argon2` (OWASP defaults m=19456,t=2,p=1, ~10 ms on M4).
+  - `modules/auth/`: register (user + sample plan + session in one transaction; duplicate
+    email → 409), login (dummy hash for unknown emails = no timing leak; same 401 message),
+    logout (deletes DB session), GET /me. `sessions.ts`: random 256-bit token in cookie,
+    SHA-256 of it in `sessions.id`, 30 days, sliding renewal in 2nd half. `cookie.ts`:
+    `sid`, httpOnly, SameSite=Lax, Secure in production.
+  - `middleware/current-user.ts` now reads only the session cookie (header/demo fallback gone).
+  - `db/sample-plan.ts` shared by seed + register. Demo login: demo@milestone.local / milestone-demo.
+  - Tests: 29 (11 auth). Helpers register real users with `request.agent` (keeps cookies).
+  - Web: `AuthScreen` (login/register, shared Zod schemas client-side), gate in `App.tsx`
+    via `useMe` (401 → null), global 401 handler in `main.tsx`, logout sets me=null THEN
+    removes other queries (clearing first left the UI stuck — found by browser test).
+  - Gotcha: a long-running Vite dev server stopped proxying /api (served index.html);
+    restarting `npm run dev` fixed it. Code/config were fine.
+  - Later (M8/M9): rate-limit /auth/login, `app.set("trust proxy")` for Secure cookies
+    behind the host's proxy, periodic cleanup of expired sessions.
+
 ## Decisions log
 
 - Package scope `@milestone/…` · TS runner `tsx` · ESLint + Prettier (not Biome)
@@ -113,6 +131,7 @@ Context for Claude Code, so we can continue where the chat left off.
 - IDs: UUIDv7 (not serial integers) · Driver: `pg` (node-postgres)
 - Tests: separate test DB in same container · Pre-auth: temporary current-user middleware
 - Frontend → API in dev: Vite proxy (not CORS) · Notes: debounced autosave
+- Passwords: Argon2id · New users start with the 60-day sample plan
 - Node 26 pinned in `.nvmrc` (engines >=22.9). nvm default was 18 → run `nvm use` / `nvm alias default 26`.
 
 ## Open questions for later
@@ -136,8 +155,12 @@ Context for Claude Code, so we can continue where the chat left off.
   (2) Why does the notes box use a `useRef` for `lastSaved` instead of `useState`?
   (3) What does the Vite proxy do, and why does it matter for Milestone 6 cookies?
 
+- Milestone 6: (1) Why does the database store a hash of the session token and not the
+  token itself? (2) What do `httpOnly` and `SameSite=Lax` each protect against?
+  (3) Why does login run Argon2 even when the email doesn't exist?
+
 ## Next
 
-1. ~~Merge Milestone 5 PR and tick it~~ (done).
-2. Milestone 6 (auth): register / login / logout, password hashing, sessions table +
-   httpOnly cookie, replace `middleware/current-user.ts`, login screen in web.
+1. Open + merge the PR for `feat/auth`, tick Milestone 6 in docs/plan.md.
+2. Milestone 7 (stats & streaks): compute stats in SQL (GROUP BY, window functions),
+   `GET /plans/:id/stats`, use it in the web app instead of `lib/progress.ts` maths.

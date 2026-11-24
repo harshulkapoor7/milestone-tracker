@@ -33,4 +33,4 @@ I'm building the real app myself to learn full-stack development.
 
 ## Current status
 
-- Milestones 1–5 done (merged). Next: Milestone 6 (auth)
+- Milestone 6 (auth) built, PR open. Next: Milestone 7 (stats & streaks)
