@@ -14,7 +14,11 @@
     "db:up": "docker compose up -d --wait",
     "db:down": "docker compose down",
     "db:logs": "docker compose logs -f db",
-    "db:psql": "docker compose exec db sh -c \"psql -U \\$POSTGRES_USER -d \\$POSTGRES_DB\""
+    "db:psql": "docker compose exec db sh -c \"psql -U \\$POSTGRES_USER -d \\$POSTGRES_DB\"",
+    "db:generate": "npm run db:generate -w @milestone/api",
+    "db:migrate": "npm run db:migrate -w @milestone/api",
+    "db:seed": "npm run db:seed -w @milestone/api",
+    "db:studio": "npm run db:studio -w @milestone/api"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
