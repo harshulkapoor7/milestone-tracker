@@ -3,7 +3,7 @@
 Each milestone = one branch + one PR into main. Tick it off when merged.
 
 - [x] **1. Repo setup**: npm workspaces, TypeScript config, ESLint + Prettier, Docker Compose for Postgres, README
-- [ ] **2. API skeleton**: Express app, `/health` route, env validation with Zod, central error handler, logging
+- [x] **2. API skeleton**: Express app, `/health` route, env validation with Zod, central error handler, logging
 - [ ] **3. Database**: Drizzle schema (users, sessions, plans, phases, days, tasks), first migration, seed script for the 60-day plan
 - [ ] **4. CRUD**: plans / days / tasks endpoints, Zod validation, Vitest + Supertest tests
 - [ ] **5. Frontend**: rebuild docs/prototype.html in React, fetching from the API with TanStack Query

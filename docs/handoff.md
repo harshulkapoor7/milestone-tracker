@@ -47,7 +47,7 @@ Context for Claude Code, so we can continue where the chat left off.
     random password); `.env.example` committed. Scripts: db:up/down/logs/psql.
   - README: getting started + scripts table.
 
-- Milestone 2 built on branch `feat/api-skeleton`:
+- Milestone 2 merged in PR #2:
   - Express 5 app in `apps/api/src/app.ts` (`createApp()`, no listen → testable), started by `index.ts`.
   - `env.ts`: Zod-validated env (NODE_ENV, PORT, LOG_LEVEL, DATABASE_URL); exits on bad config.
     Loaded with Node's `--env-file-if-exists=../../.env` (no dotenv).
@@ -72,6 +72,6 @@ Context for Claude Code, so we can continue where the chat left off.
 
 ## Next
 
-1. Open + merge the PR for `feat/api-skeleton`, tick Milestone 2 in docs/plan.md.
+1. ~~Merge Milestone 2 PR and tick it~~ (done).
 2. Milestone 3 (database): Drizzle schema (users, sessions, plans, phases, days, tasks),
    first migration, seed script for the 60-day plan. Add a DB ping to the health service.

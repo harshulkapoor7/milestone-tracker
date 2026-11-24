@@ -33,4 +33,4 @@ I'm building the real app myself to learn full-stack development.
 
 ## Current status
 
-- Milestone 2 (API skeleton) built, PR open. Next: Milestone 3 (database)
+- Milestones 1–2 done (merged). Next: Milestone 3 (database)
