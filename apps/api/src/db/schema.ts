@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   check,
   date,
@@ -112,3 +112,24 @@ export const tasks = pgTable(
     check("tasks_minutes_non_negative", sql`${t.minutes} >= 0`),
   ],
 );
+
+// Relations: tell Drizzle how tables connect, so one query can load
+// a plan with its phases, days and tasks nested inside. No SQL changes.
+export const plansRelations = relations(plans, ({ many }) => ({
+  phases: many(phases),
+  days: many(days),
+}));
+
+export const phasesRelations = relations(phases, ({ one }) => ({
+  plan: one(plans, { fields: [phases.planId], references: [plans.id] }),
+}));
+
+export const daysRelations = relations(days, ({ one, many }) => ({
+  plan: one(plans, { fields: [days.planId], references: [plans.id] }),
+  phase: one(phases, { fields: [days.phaseId], references: [phases.id] }),
+  tasks: many(tasks),
+}));
+
+export const tasksRelations = relations(tasks, ({ one }) => ({
+  day: one(days, { fields: [tasks.dayId], references: [days.id] }),
+}));

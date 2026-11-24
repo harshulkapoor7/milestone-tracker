@@ -1,5 +1,7 @@
 // The 60-day plan, copied from docs/prototype.html so the real app starts with the same content.
 
+export const DEMO_EMAIL = "demo@milestone.local";
+
 export const PLAN_TITLE = "60-Day Full-Stack Sprint";
 
 export const PHASES = [
