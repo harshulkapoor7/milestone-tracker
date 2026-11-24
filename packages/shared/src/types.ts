@@ -49,3 +49,23 @@ export interface User {
   email: string;
   createdAt: string;
 }
+
+// GET /plans/:id/stats
+export interface PlanStats {
+  totals: {
+    tasks: number;
+    tasksDone: number;
+    minutes: number;
+    minutesDone: number;
+    days: number;
+    daysDone: number;
+  };
+  byType: { type: TaskType; total: number; done: number }[];
+  byPhase: { phaseId: string; days: number; daysDone: number }[];
+  streak: {
+    current: number; // consecutive days with ≥1 task done, ending today or yesterday
+    longest: number;
+    activeToday: boolean;
+  };
+  activity: { date: string; tasksDone: number }[]; // "YYYY-MM-DD" in the given time zone
+}

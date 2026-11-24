@@ -5,6 +5,7 @@ import type {
   LoginInput,
   Plan,
   PlanDetail,
+  PlanStats,
   RegisterInput,
   Task,
   UpdateDayInput,
@@ -65,6 +66,8 @@ export const api = {
 
   listPlans: () => request<Plan[]>("/plans"),
   getPlan: (id: string) => request<PlanDetail>(`/plans/${id}`),
+  getStats: (id: string, tz: string) =>
+    request<PlanStats>(`/plans/${id}/stats?tz=${encodeURIComponent(tz)}`),
   updatePlan: (id: string, input: UpdatePlanInput) =>
     send<Plan>("PATCH", `/plans/${id}`, input),
 

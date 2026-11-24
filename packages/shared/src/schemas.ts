@@ -86,3 +86,19 @@ export const loginSchema = z.object({
 
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
+
+// ---- Stats ----
+// An IANA time zone name like "Asia/Kolkata" or "Europe/London".
+// The streak depends on it: 11 pm in Mumbai is already tomorrow in Tokyo.
+const isTimeZone = (tz: string) => {
+  try {
+    new Intl.DateTimeFormat("en", { timeZone: tz });
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+export const statsQuerySchema = z.object({
+  tz: z.string().max(64).refine(isTimeZone, "Unknown time zone").default("UTC"),
+});

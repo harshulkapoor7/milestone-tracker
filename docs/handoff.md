@@ -123,6 +123,20 @@ Context for Claude Code, so we can continue where the chat left off.
   - Later (M8/M9): rate-limit /auth/login, `app.set("trust proxy")` for Secure cookies
     behind the host's proxy, periodic cleanup of expired sessions.
 
+- Milestone 7 built on branch `feat/stats`:
+  - `GET /plans/:id/stats?tz=…` (`modules/stats/`): raw SQL via `db.execute(sql\`…\`)`.
+Queries: tasks by type (GROUP BY + FILTER), days done per phase (CTE: per-day status,
+then per-phase), activity per local date (`AT TIME ZONE`), streaks via gaps-and-islands
+(`date - row_number() OVER (ORDER BY date)`). Current streak = run ending today or
+yesterday. `::text` on dates avoids pg → JS Date time-zone shifts.
+  - `statsQuerySchema` validates `tz` with `Intl.DateTimeFormat` (default UTC).
+  - 8 stats tests (37 total); set `done_at` directly for exact dates; verified a test fails
+    when the grace-day rule is broken.
+  - Web: `useStats` (key `["plans", id, "stats"]`, refreshed by any plan invalidation),
+    StatsRow + PhaseLegend use server numbers; `planStats` deleted from `lib/progress.ts`.
+  - Note: unticking a task clears its `done_at`, so activity/streak reflect current ticks,
+    not an append-only log. An events table would be needed for full history.
+
 ## Decisions log
 
 - Package scope `@milestone/…` · TS runner `tsx` · ESLint + Prettier (not Biome)
@@ -132,6 +146,7 @@ Context for Claude Code, so we can continue where the chat left off.
 - Tests: separate test DB in same container · Pre-auth: temporary current-user middleware
 - Frontend → API in dev: Vite proxy (not CORS) · Notes: debounced autosave
 - Passwords: Argon2id · New users start with the 60-day sample plan
+- Streak = consecutive calendar days with ≥1 task done (from done_at, user's time zone)
 - Node 26 pinned in `.nvmrc` (engines >=22.9). nvm default was 18 → run `nvm use` / `nvm alias default 26`.
 
 ## Open questions for later
@@ -159,8 +174,13 @@ Context for Claude Code, so we can continue where the chat left off.
   token itself? (2) What do `httpOnly` and `SameSite=Lax` each protect against?
   (3) Why does login run Argon2 even when the email doesn't exist?
 
+- Milestone 7: (1) Explain "gaps and islands": why does date − row_number stay the same
+  inside a run of consecutive days? (2) Why must the browser send its time zone?
+  (3) What does `count(t.done_at)` count, and why not `count(*)`?
+
 ## Next
 
-1. ~~Merge Milestone 6 PR and tick it~~ (done).
-2. Milestone 7 (stats & streaks): compute stats in SQL (GROUP BY, window functions),
-   `GET /plans/:id/stats`, use it in the web app instead of `lib/progress.ts` maths.
+1. Open + merge the PR for `feat/stats`, tick Milestone 7 in docs/plan.md.
+2. Milestone 8 (CI + deploy): GitHub Actions (lint, typecheck, test with a Postgres service),
+   hosted Postgres, API host, Vercel for web. Decisions: hosts. Also: login rate limit,
+   `trust proxy`, expired-session cleanup.

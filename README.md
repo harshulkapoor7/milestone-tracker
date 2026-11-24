@@ -37,23 +37,24 @@ Log in with a session cookie (`httpOnly`, `SameSite=Lax`). Every route except
 After `npm run db:seed` you can log in as **demo@milestone.local / milestone-demo**
 (local development only).
 
-| Method | Path              | What it does                                               |
-| ------ | ----------------- | ---------------------------------------------------------- |
-| GET    | `/health`         | Server + database status                                   |
-| POST   | `/auth/register`  | Create an account (starts with the 60-day plan) and log in |
-| POST   | `/auth/login`     | Log in: sets the session cookie                            |
-| POST   | `/auth/logout`    | Log out: deletes the session                               |
-| GET    | `/me`             | The logged-in user                                         |
-| GET    | `/plans`          | Your plans                                                 |
-| POST   | `/plans`          | Create a plan (optionally with phase names)                |
-| GET    | `/plans/:id`      | One plan with phases, days and tasks                       |
-| PATCH  | `/plans/:id`      | Rename or change start date                                |
-| POST   | `/plans/:id/days` | Add a day at the end                                       |
-| PATCH  | `/days/:id`       | Edit title, note, phase or position                        |
-| DELETE | `/days/:id`       | Delete a day and its tasks                                 |
-| POST   | `/days/:id/tasks` | Add a task to a day                                        |
-| PATCH  | `/tasks/:id`      | Edit a task; `{ "done": true }` ticks it off               |
-| DELETE | `/tasks/:id`      | Delete a task                                              |
+| Method | Path                               | What it does                                               |
+| ------ | ---------------------------------- | ---------------------------------------------------------- |
+| GET    | `/health`                          | Server + database status                                   |
+| POST   | `/auth/register`                   | Create an account (starts with the 60-day plan) and log in |
+| POST   | `/auth/login`                      | Log in: sets the session cookie                            |
+| POST   | `/auth/logout`                     | Log out: deletes the session                               |
+| GET    | `/me`                              | The logged-in user                                         |
+| GET    | `/plans`                           | Your plans                                                 |
+| POST   | `/plans`                           | Create a plan (optionally with phase names)                |
+| GET    | `/plans/:id`                       | One plan with phases, days and tasks                       |
+| GET    | `/plans/:id/stats?tz=Asia/Kolkata` | Progress totals, per type/phase, streaks, daily activity   |
+| PATCH  | `/plans/:id`                       | Rename or change start date                                |
+| POST   | `/plans/:id/days`                  | Add a day at the end                                       |
+| PATCH  | `/days/:id`                        | Edit title, note, phase or position                        |
+| DELETE | `/days/:id`                        | Delete a day and its tasks                                 |
+| POST   | `/days/:id/tasks`                  | Add a task to a day                                        |
+| PATCH  | `/tasks/:id`                       | Edit a task; `{ "done": true }` ticks it off               |
+| DELETE | `/tasks/:id`                       | Delete a task                                              |
 
 ## Scripts
 

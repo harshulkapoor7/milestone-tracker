@@ -16,6 +16,9 @@ export const keys = {
   me: ["me"] as const,
   plans: ["plans"] as const,
   plan: (id: string) => ["plans", id] as const,
+  // Nested under the plan's key, so anything that refreshes the plan
+  // (ticking a task, any edit) refreshes its stats too.
+  stats: (id: string) => ["plans", id, "stats"] as const,
 };
 
 // Who is logged in? null = nobody (the API answered 401), which is a normal
@@ -77,6 +80,19 @@ export function usePlan(id: string | undefined) {
     queryKey: keys.plan(id ?? ""),
     queryFn: () => api.getPlan(id!),
     enabled: Boolean(id), // wait until we know which plan to load
+  });
+}
+
+// The browser's time zone, e.g. "Asia/Kolkata": the server needs it to know
+// where *your* midnight is when it counts streak days.
+const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+export function useStats(planId: string | undefined) {
+  return useQuery({
+    queryKey: keys.stats(planId ?? ""),
+    queryFn: () => api.getStats(planId!, timeZone),
+    enabled: Boolean(planId),
+    placeholderData: (previous) => previous, // keep old numbers while refetching
   });
 }
 
