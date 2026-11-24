@@ -1,4 +1,4 @@
-import type { PlanDetail, TaskType } from "@milestone/shared";
+import type { PlanDetail } from "@milestone/shared";
 
 // Pure functions: plan data in, numbers out. No React, easy to reason about.
 
@@ -24,43 +24,6 @@ export function currentDayIndex(startDate: string, dayCount: number) {
     (startOfToday.getTime() - start.getTime()) / msPerDay,
   );
   return Math.min(Math.max(diff, 0), Math.max(dayCount - 1, 0));
-}
-
-export function planStats(plan: PlanDetail) {
-  const tasks = plan.days.flatMap((d) => d.tasks);
-  const byType = (type: TaskType) => {
-    const all = tasks.filter((t) => t.type === type);
-    return { done: all.filter(isTaskDone).length, total: all.length };
-  };
-  const minutes = tasks.reduce((sum, t) => sum + t.minutes, 0);
-  const doneMinutes = tasks
-    .filter(isTaskDone)
-    .reduce((sum, t) => sum + t.minutes, 0);
-
-  // Streak: consecutive finished days counting back from today
-  // (today only counts once it's finished, like the prototype).
-  let i = currentDayIndex(plan.startDate, plan.days.length);
-  const today = plan.days[i];
-  if (today && !isDayDone(today)) i--;
-  let streak = 0;
-  while (i >= 0 && plan.days[i] && isDayDone(plan.days[i]!)) {
-    streak++;
-    i--;
-  }
-
-  return {
-    daysDone: plan.days.filter(isDayDone).length,
-    dayCount: plan.days.length,
-    learn: byType("learn"),
-    practice: byType("practice"),
-    build: byType("build"),
-    hoursDone: Math.round(doneMinutes / 60),
-    hoursTotal: Math.round(minutes / 60),
-    percent: tasks.length
-      ? Math.round((tasks.filter(isTaskDone).length / tasks.length) * 100)
-      : 0,
-    streak,
-  };
 }
 
 // Phase position → its metro-line colour (cycles if there are more than 4).

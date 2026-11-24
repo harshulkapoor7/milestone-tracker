@@ -7,12 +7,7 @@ import { MetroMap } from "./components/MetroMap";
 import { PlanSettings } from "./components/PlanSettings";
 import { PhaseLegend } from "./components/PhaseLegend";
 import { StatsRow } from "./components/StatsRow";
-import {
-  currentDayIndex,
-  dayDate,
-  phaseColor,
-  planStats,
-} from "./lib/progress";
+import { currentDayIndex, dayDate, phaseColor } from "./lib/progress";
 import { dayMatches, NO_FILTERS, type Filters } from "./lib/filters";
 import {
   useLogout,
@@ -20,6 +15,7 @@ import {
   usePlan,
   usePlanEditor,
   usePlans,
+  useStats,
   useToggleTask,
 } from "./lib/queries";
 
@@ -44,6 +40,7 @@ function PlanPage({ user }: { user: User }) {
   const plans = usePlans();
   const planId = plans.data?.[0]?.id; // one plan per user for now
   const plan = usePlan(planId);
+  const stats = useStats(planId);
   const toggleTask = useToggleTask(planId ?? "");
   const editor = usePlanEditor(planId ?? "");
   const logout = useLogout();
@@ -70,7 +67,10 @@ function PlanPage({ user }: { user: User }) {
   }
 
   const data = plan.data;
-  const stats = planStats(data);
+  const totals = stats.data?.totals;
+  const percent = totals?.tasks
+    ? Math.round((totals.tasksDone / totals.tasks) * 100)
+    : 0;
   const today = currentDayIndex(data.startDate, data.days.length);
   const phasePosition = new Map(data.phases.map((p) => [p.id, p.position]));
   const visibleDays = data.days
@@ -130,8 +130,8 @@ function PlanPage({ user }: { user: User }) {
               </p>
               <p className="mt-2 text-mute">
                 Today is <b className="text-ink">Day {today + 1}</b> of{" "}
-                {data.days.length} ·{" "}
-                <b className="text-ink">{stats.percent}%</b> complete
+                {data.days.length} · <b className="text-ink">{percent}%</b>{" "}
+                complete
               </p>
             </div>
             <div className="flex flex-wrap gap-2.5">
@@ -154,8 +154,8 @@ function PlanPage({ user }: { user: User }) {
           </div>
 
           <MetroMap plan={data} today={today} onSelectDay={goToDay} />
-          <PhaseLegend plan={data} />
-          <StatsRow stats={stats} />
+          <PhaseLegend plan={data} stats={stats.data} />
+          <StatsRow stats={stats.data} />
         </div>
       </header>
 
