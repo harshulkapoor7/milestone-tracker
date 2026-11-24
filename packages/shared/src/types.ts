@@ -42,3 +42,10 @@ export interface PlanDetail extends Plan {
   phases: Phase[];
   days: (Day & { tasks: Task[] })[];
 }
+
+// GET /me, POST /auth/login, POST /auth/register
+export interface User {
+  id: string;
+  email: string;
+  createdAt: string;
+}

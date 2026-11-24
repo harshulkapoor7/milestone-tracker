@@ -66,3 +66,23 @@ export type CreateDayInput = z.infer<typeof createDaySchema>;
 export type UpdateDayInput = z.infer<typeof updateDaySchema>;
 export type CreateTaskInput = z.infer<typeof createTaskSchema>;
 export type UpdateTaskInput = z.infer<typeof updateTaskSchema>;
+
+// ---- Auth ----
+// Emails are trimmed and lowercased first, so "Alice@X.dev " and "alice@x.dev"
+// are the same account.
+const emailSchema = z.string().trim().toLowerCase().pipe(z.email());
+
+export const registerSchema = z.object({
+  email: emailSchema,
+  // Length is what makes passwords strong; 8 is NIST's minimum.
+  // Max stops someone sending a 10 MB "password" to make hashing slow.
+  password: z.string().min(8, "Use at least 8 characters").max(200),
+});
+
+export const loginSchema = z.object({
+  email: emailSchema,
+  password: z.string().min(1).max(200),
+});
+
+export type RegisterInput = z.infer<typeof registerSchema>;
+export type LoginInput = z.infer<typeof loginSchema>;
