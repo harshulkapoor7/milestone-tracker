@@ -2,12 +2,15 @@ import type {
   CreateDayInput,
   CreateTaskInput,
   Day,
+  LoginInput,
   Plan,
   PlanDetail,
+  RegisterInput,
   Task,
   UpdateDayInput,
   UpdatePlanInput,
   UpdateTaskInput,
+  User,
 } from "@milestone/shared";
 
 // Every request goes to /api/... on our own origin; Vite's proxy forwards it.
@@ -50,7 +53,16 @@ const send = <T>(method: string, path: string, body?: unknown) =>
   });
 
 // One function per API route (see the API table in README.md).
+// The session cookie is httpOnly, so this code never sees or touches it.
+// The browser stores it and sends it with every request to our own origin
+// (thanks to the Vite proxy, /api is our own origin).
 export const api = {
+  me: () => request<User>("/me"),
+  register: (input: RegisterInput) =>
+    send<User>("POST", "/auth/register", input),
+  login: (input: LoginInput) => send<User>("POST", "/auth/login", input),
+  logout: () => send<void>("POST", "/auth/logout"),
+
   listPlans: () => request<Plan[]>("/plans"),
   getPlan: (id: string) => request<PlanDetail>(`/plans/${id}`),
   updatePlan: (id: string, input: UpdatePlanInput) =>

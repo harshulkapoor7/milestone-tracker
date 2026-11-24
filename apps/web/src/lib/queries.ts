@@ -2,18 +2,71 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type {
   CreateDayInput,
   CreateTaskInput,
+  LoginInput,
   PlanDetail,
+  RegisterInput,
   UpdateDayInput,
   UpdatePlanInput,
   UpdateTaskInput,
 } from "@milestone/shared";
-import { api } from "./api";
+import { api, ApiError } from "./api";
 
 // Query keys name each piece of cached data, like labels on storage boxes.
 export const keys = {
+  me: ["me"] as const,
   plans: ["plans"] as const,
   plan: (id: string) => ["plans", id] as const,
 };
+
+// Who is logged in? null = nobody (the API answered 401), which is a normal
+// answer here, not an error. Any other failure is a real error.
+export function useMe() {
+  return useQuery({
+    queryKey: keys.me,
+    queryFn: () =>
+      api.me().catch((err: unknown) => {
+        if (err instanceof ApiError && err.status === 401) return null;
+        throw err;
+      }),
+    retry: false,
+  });
+}
+
+// Log in / register: on success, the API has set the cookie; we just store
+// the returned user under "me", which swaps the login screen for the app.
+export function useLogin() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (input: LoginInput) => api.login(input),
+    onSuccess: (user) => queryClient.setQueryData(keys.me, user),
+  });
+}
+
+export function useRegister() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (input: RegisterInput) => api.register(input),
+    onSuccess: (user) => queryClient.setQueryData(keys.me, user),
+  });
+}
+
+// Log out: forget the user, then wipe everything else cached, so the next
+// person to log in on this browser can't glimpse the previous person's plan.
+// Order matters: the App is *watching* the "me" entry. Setting it to null swaps
+// the screen to login. (Clearing the whole cache first would delete the entry
+// the App is watching, and it would never hear that nobody is logged in.)
+export function useLogout() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => api.logout(),
+    onSettled: () => {
+      queryClient.setQueryData(keys.me, null);
+      queryClient.removeQueries({
+        predicate: (query) => query.queryKey[0] !== keys.me[0],
+      });
+    },
+  });
+}
 
 export function usePlans() {
   return useQuery({ queryKey: keys.plans, queryFn: api.listPlans });

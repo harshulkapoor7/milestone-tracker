@@ -1,6 +1,8 @@
 // The 60-day plan, copied from docs/prototype.html so the real app starts with the same content.
 
+// Local development only: a known login so you can try the app straight after seeding.
 export const DEMO_EMAIL = "demo@milestone.local";
+export const DEMO_PASSWORD = "milestone-demo";
 
 export const PLAN_TITLE = "60-Day Full-Stack Sprint";
 
