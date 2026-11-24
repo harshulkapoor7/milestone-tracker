@@ -30,6 +30,18 @@ export default tseslint.config(
     },
   },
 
+  // Tests inspect untyped JSON responses (Supertest's res.body is `any`) on purpose.
+  // App code keeps the strict rules.
+  {
+    files: ["**/test/**/*.ts"],
+    rules: {
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/no-unsafe-member-access": "off",
+      "@typescript-eslint/no-unsafe-argument": "off",
+      "@typescript-eslint/no-unsafe-call": "off",
+    },
+  },
+
   // Plain .js files (like this config) aren't part of any tsconfig, so skip type-aware rules.
   { files: ["**/*.js"], ...tseslint.configs.disableTypeChecked },
 
