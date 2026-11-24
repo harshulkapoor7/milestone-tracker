@@ -1,7 +1,10 @@
+import cookieParser from "cookie-parser";
 import express from "express";
 import { pinoHttp } from "pino-http";
 import { logger } from "./logger";
 import { currentUser } from "./middleware/current-user";
+import { me } from "./modules/auth/auth.controller";
+import { authRouter } from "./modules/auth/auth.routes";
 import { daysRouter } from "./modules/days/days.routes";
 import { healthRouter } from "./modules/health/health.routes";
 import { plansRouter } from "./modules/plans/plans.routes";
@@ -35,12 +38,15 @@ export function createApp() {
     }),
   );
   app.use(express.json()); //       2. parse JSON request bodies into req.body
+  app.use(cookieParser()); // 3. read the Cookie header into req.cookies
 
   // Public routes (no user needed)
   app.use("/health", healthRouter);
+  app.use("/auth", authRouter);
 
   // Everything below needs a current user
   app.use(currentUser);
+  app.get("/me", me);
   app.use("/plans", plansRouter);
   app.use("/days", daysRouter);
   app.use("/tasks", tasksRouter);
