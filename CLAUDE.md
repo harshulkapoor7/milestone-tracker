@@ -33,4 +33,4 @@ I'm building the real app myself to learn full-stack development.
 
 ## Current status
 
-- Milestone 3 (database) built, PR open. Next: Milestone 4 (CRUD)
+- Milestones 1–3 done (merged). Next: Milestone 4 (CRUD)

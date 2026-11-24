@@ -57,7 +57,7 @@ Context for Claude Code, so we can continue where the chat left off.
     (e.g. bad JSON) → 400; anything else → 500 with a generic message (details only in logs).
   - `modules/health/`: routes → controller → service. `GET /health` → `{status, uptimeSeconds, timestamp}`.
 
-- Milestone 3 built on branch `feat/database`:
+- Milestone 3 merged in PR #3:
   - Drizzle ORM + `pg` Pool (`src/db/client.ts`, `casing: "snake_case"`). Pool has an
     `error` listener; without it a DB restart crashed the API (found by testing).
   - `src/db/schema.ts`: users, sessions, plans, phases, days, tasks. UUIDv7 ids
@@ -92,6 +92,6 @@ Context for Claude Code, so we can continue where the chat left off.
 
 ## Next
 
-1. Open + merge the PR for `feat/database`, tick Milestone 3 in docs/plan.md.
+1. ~~Merge Milestone 3 PR and tick it~~ (done).
 2. Milestone 4 (CRUD): plans / days / tasks endpoints, Zod schemas in packages/shared,
    Vitest + Supertest tests (needs a test database decision).
