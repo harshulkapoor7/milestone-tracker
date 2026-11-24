@@ -19,7 +19,7 @@ docs/            plan and UI prototype
 
 ## Getting started
 
-**Requirements:** Node.js 22+ and [Docker Desktop](https://www.docker.com/products/docker-desktop/).
+**Requirements:** Node.js 22.9+ (run `nvm use` to get the version in `.nvmrc`) and [Docker Desktop](https://www.docker.com/products/docker-desktop/).
 
 ```bash
 npm install              # installs every workspace and links them together
