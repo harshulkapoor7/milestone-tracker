@@ -70,7 +70,7 @@ Context for Claude Code, so we can continue where the chat left off.
     1 plan, 4 phases, 60 days, 180 tasks, copied from the prototype. Idempotent, in a transaction.
   - `/health` now pings the DB: 200 ok / 503 degraded.
 
-- Milestone 4 built on branch `feat/crud`:
+- Milestone 4 merged in PR #4:
   - Zod request schemas in `packages/shared/src/schemas.ts` (TASK_TYPES moved to
     `constants.ts` to avoid a circular import). PATCH bodies must have ≥1 field.
   - Tasks take `{ done: boolean }`; the server sets/clears `done_at`.
@@ -104,8 +104,12 @@ Context for Claude Code, so we can continue where the chat left off.
   (2) Why is the seed in a transaction? (3) Adding `phases.color`: which two commands,
   and why commit the generated file?
 
+- Milestone 4: (1) Why does someone else's task return 404 rather than 403?
+  (2) Why does the client send `{ done: true }` instead of a `doneAt` timestamp?
+  (3) Why do tests use a separate `_test` database, and why are tables emptied before each test?
+
 ## Next
 
-1. Open + merge the PR for `feat/crud`, tick Milestone 4 in docs/plan.md.
+1. ~~Merge Milestone 4 PR and tick it~~ (done).
 2. Milestone 5 (frontend): scaffold apps/web with Vite + React + Tailwind + TanStack Query,
    rebuild docs/prototype.html against the API (dev uses the demo user fallback).
