@@ -83,6 +83,18 @@ Context for Claude Code, so we can continue where the chat left off.
     (created + migrated by global-setup), tables truncated before each test, files run serially.
   - ESLint: no-unsafe-* rules off for test files only (Supertest bodies are `any`).
 
+- Milestone 5 IN PROGRESS on branch `feat/frontend` (step 1 of ~4 done):
+  - apps/web: Vite 8 + React 19 + Tailwind 4 + TanStack Query 5. `npm run dev` (root) runs
+    api + web together via concurrently. Vite proxies `/api/*` → `localhost:3000/*`.
+  - Response types (`Plan`, `PlanDetail`, `Task`…) in `packages/shared/src/types.ts`.
+  - `src/lib/api.ts` (fetch wrapper, ApiError), `queries.ts` (usePlans, usePlan,
+    useToggleTask with optimistic update + rollback), `progress.ts` (pure stats/streak).
+  - UI: header, 6-stat row, collapsible day cards (today open), tickable tasks, light/dark.
+  - Tailwind tokens from the prototype in `index.css` with `@theme static` (needed because
+    phase colours are only referenced from JS).
+  - Remaining for M5: metro-line map (SVG), phase filters + search + hide done,
+    day notes, edit mode (add/rename/delete days & tasks), plan settings.
+
 ## Decisions log
 
 - Package scope `@milestone/…` · TS runner `tsx` · ESLint + Prettier (not Biome)
@@ -90,6 +102,7 @@ Context for Claude Code, so we can continue where the chat left off.
 - Logging: Pino (+ pino-http, pino-pretty) · ESLint: `_`-prefixed vars may be unused
 - IDs: UUIDv7 (not serial integers) · Driver: `pg` (node-postgres)
 - Tests: separate test DB in same container · Pre-auth: temporary current-user middleware
+- Frontend → API in dev: Vite proxy (not CORS)
 - Node 26 pinned in `.nvmrc` (engines >=22.9). nvm default was 18 → run `nvm use` / `nvm alias default 26`.
 
 ## Open questions for later
@@ -110,6 +123,5 @@ Context for Claude Code, so we can continue where the chat left off.
 
 ## Next
 
-1. ~~Merge Milestone 4 PR and tick it~~ (done).
-2. Milestone 5 (frontend): scaffold apps/web with Vite + React + Tailwind + TanStack Query,
-   rebuild docs/prototype.html against the API (dev uses the demo user fallback).
+1. Milestone 5 step 2: metro-line map + phase legend + "Go to today".
+2. Then filters/search, notes, edit mode; then PR for `feat/frontend`.
