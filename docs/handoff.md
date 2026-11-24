@@ -84,6 +84,12 @@ Context for Claude Code, so we can continue where the chat left off.
 - npm blocked install scripts for esbuild and fsevents; both work without them.
 - apps/web has only a package.json; Vite scaffolding happens in Milestone 5.
 
+## Quizzes to answer (deferred to end of day, 24 Nov)
+
+- Milestone 3: (1) Deleting a phase: what happens to its days, and why set null over cascade?
+  (2) Why is the seed in a transaction? (3) Adding `phases.color`: which two commands,
+  and why commit the generated file?
+
 ## Next
 
 1. Open + merge the PR for `feat/database`, tick Milestone 3 in docs/plan.md.
