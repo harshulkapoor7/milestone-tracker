@@ -1,0 +1,5 @@
+package-lock.json
+dist/
+build/
+# Reference prototype: keep exactly as written
+docs/prototype.html

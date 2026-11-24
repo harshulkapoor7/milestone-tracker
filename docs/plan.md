@@ -13,6 +13,7 @@ Each milestone = one branch + one PR into main. Tick it off when merged.
 - [ ] **9. Polish**: README with architecture diagram, screenshots, live link
 
 ## Data model
+
 users(id, email, password_hash, created_at)
 sessions(id, user_id, expires_at)
 plans(id, user_id, title, start_date)
@@ -21,6 +22,7 @@ days(id, plan_id, phase_id, position, title, note)
 tasks(id, day_id, type: learn|practice|build, text, minutes, position, done_at NULL)
 
 ## API
+
 POST /auth/register · POST /auth/login · POST /auth/logout · GET /me
 GET /plans · POST /plans · GET /plans/:id · PATCH /plans/:id
 POST /plans/:id/days · PATCH /days/:id · DELETE /days/:id

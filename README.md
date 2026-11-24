@@ -5,9 +5,11 @@ Track a multi-week learning sprint day by day: phases, daily tasks (learn / prac
 **Status:** in progress. See [docs/plan.md](docs/plan.md) for the roadmap.
 
 ## Stack
+
 Node.js · Express · TypeScript · PostgreSQL · Drizzle · React · Vite · Tailwind
 
 ## Structure
+
 ```
 apps/api         Express API
 apps/web         React frontend

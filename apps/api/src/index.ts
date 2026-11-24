@@ -3,4 +3,6 @@
 import { TASK_TYPES, type TaskType } from "@milestone/shared";
 
 const first: TaskType = TASK_TYPES[0];
-console.log(`API ready. Task types: ${TASK_TYPES.join(", ")} (first: ${first})`);
+console.log(
+  `API ready. Task types: ${TASK_TYPES.join(", ")} (first: ${first})`,
+);
