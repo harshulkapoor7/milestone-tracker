@@ -1,5 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { PlanDetail, UpdateDayInput } from "@milestone/shared";
+import type {
+  CreateDayInput,
+  CreateTaskInput,
+  PlanDetail,
+  UpdateDayInput,
+  UpdatePlanInput,
+  UpdateTaskInput,
+} from "@milestone/shared";
 import { api } from "./api";
 
 // Query keys name each piece of cached data, like labels on storage boxes.
@@ -83,3 +90,42 @@ export function useUpdateDay(planId: string) {
     },
   });
 }
+
+// Edit-mode actions. Edits are rare and change structure (new rows, new positions),
+// so instead of patching the cache by hand we simply refetch the plan afterwards.
+// onSettled runs on success AND failure, so a rejected edit also snaps back.
+function useEditMutation<TVars, TData>(fn: (vars: TVars) => Promise<TData>) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: fn,
+    // keys.plans = ["plans"] also matches ["plans", id]: list and detail both refresh.
+    onSettled: () => queryClient.invalidateQueries({ queryKey: keys.plans }),
+  });
+}
+
+export function usePlanEditor(planId: string) {
+  return {
+    updatePlan: useEditMutation((input: UpdatePlanInput) =>
+      api.updatePlan(planId, input),
+    ),
+    addDay: useEditMutation((input: CreateDayInput) =>
+      api.createDay(planId, input),
+    ),
+    updateDay: useEditMutation(
+      ({ dayId, input }: { dayId: string; input: UpdateDayInput }) =>
+        api.updateDay(dayId, input),
+    ),
+    deleteDay: useEditMutation((dayId: string) => api.deleteDay(dayId)),
+    addTask: useEditMutation(
+      ({ dayId, input }: { dayId: string; input: CreateTaskInput }) =>
+        api.createTask(dayId, input),
+    ),
+    updateTask: useEditMutation(
+      ({ taskId, input }: { taskId: string; input: UpdateTaskInput }) =>
+        api.updateTask(taskId, input),
+    ),
+    deleteTask: useEditMutation((taskId: string) => api.deleteTask(taskId)),
+  };
+}
+
+export type PlanEditor = ReturnType<typeof usePlanEditor>;

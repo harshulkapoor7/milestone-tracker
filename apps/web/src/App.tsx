@@ -2,6 +2,7 @@ import { useState, type ReactNode } from "react";
 import { DayCard } from "./components/DayCard";
 import { FilterBar } from "./components/FilterBar";
 import { MetroMap } from "./components/MetroMap";
+import { PlanSettings } from "./components/PlanSettings";
 import { PhaseLegend } from "./components/PhaseLegend";
 import { StatsRow } from "./components/StatsRow";
 import {
@@ -11,18 +12,20 @@ import {
   planStats,
 } from "./lib/progress";
 import { dayMatches, NO_FILTERS, type Filters } from "./lib/filters";
-import { usePlan, usePlans, useToggleTask } from "./lib/queries";
+import { usePlan, usePlanEditor, usePlans, useToggleTask } from "./lib/queries";
 
 export function App() {
   const plans = usePlans();
   const planId = plans.data?.[0]?.id; // one plan per user for now
   const plan = usePlan(planId);
   const toggleTask = useToggleTask(planId ?? "");
+  const editor = usePlanEditor(planId ?? "");
 
   // Which days are expanded. null = "not touched yet" → only today is open.
   // (Hooks must run on every render, so this lives above the early returns.)
   const [openDays, setOpenDays] = useState<Set<number> | null>(null);
   const [filters, setFilters] = useState<Filters>(NO_FILTERS);
+  const [editing, setEditing] = useState(false);
 
   if (plans.isPending || (planId && plan.isPending)) {
     return <Message>Loading your plan…</Message>;
@@ -73,6 +76,16 @@ export function App() {
     });
   };
 
+  // New days go at the end, in the same phase as the current last day.
+  const addDay = async () => {
+    const lastDay = data.days.at(-1);
+    await editor.addDay.mutateAsync({
+      title: "New day",
+      phaseId: lastDay?.phaseId ?? null,
+    });
+    goToDay(data.days.length); // the new day's index (resolves after the refetch)
+  };
+
   return (
     <>
       <header className="px-[max(5vw,16px)] py-[clamp(20px,3.5vw,48px)]">
@@ -88,13 +101,23 @@ export function App() {
                 <b className="text-ink">{stats.percent}%</b> complete
               </p>
             </div>
-            <button
-              type="button"
-              onClick={() => goToDay(today)}
-              className="min-h-11 cursor-pointer rounded-full border-2 border-ink bg-ink px-4.5 font-semibold text-bg"
-            >
-              Go to today
-            </button>
+            <div className="flex flex-wrap gap-2.5">
+              <button
+                type="button"
+                onClick={() => goToDay(today)}
+                className="min-h-11 cursor-pointer rounded-full border-2 border-ink bg-ink px-4.5 font-semibold text-bg"
+              >
+                Go to today
+              </button>
+              <button
+                type="button"
+                aria-pressed={editing}
+                onClick={() => setEditing((on) => !on)}
+                className={`min-h-11 cursor-pointer rounded-full border-2 border-ink px-4.5 font-semibold ${editing ? "bg-ink text-bg" : "bg-bg text-ink"}`}
+              >
+                {editing ? "Done editing" : "Edit plan"}
+              </button>
+            </div>
           </div>
 
           <MetroMap plan={data} today={today} onSelectDay={goToDay} />
@@ -133,11 +156,26 @@ export function App() {
                     done: task.doneAt === null,
                   })
                 }
+                editing={editing}
+                editor={editor}
+                phases={data.phases}
               />
             ))}
           </div>
+          {editing && (
+            <button
+              type="button"
+              onClick={() => void addDay()}
+              disabled={editor.addDay.isPending}
+              className="mt-4 min-h-11 cursor-pointer rounded-full border-2 border-ink bg-bg px-4.5 font-semibold disabled:opacity-50"
+            >
+              {editor.addDay.isPending ? "Adding…" : "Add day"}
+            </button>
+          )}
         </div>
       </main>
+
+      <PlanSettings plan={data} editor={editor} />
     </>
   );
 }

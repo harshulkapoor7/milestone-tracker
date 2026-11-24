@@ -1,9 +1,12 @@
 import type {
+  CreateDayInput,
+  CreateTaskInput,
   Day,
   Plan,
   PlanDetail,
   Task,
   UpdateDayInput,
+  UpdatePlanInput,
   UpdateTaskInput,
 } from "@milestone/shared";
 
@@ -40,17 +43,28 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return (res.status === 204 ? undefined : await res.json()) as T;
 }
 
+const send = <T>(method: string, path: string, body?: unknown) =>
+  request<T>(path, {
+    method,
+    body: body === undefined ? undefined : JSON.stringify(body),
+  });
+
+// One function per API route (see the API table in README.md).
 export const api = {
   listPlans: () => request<Plan[]>("/plans"),
   getPlan: (id: string) => request<PlanDetail>(`/plans/${id}`),
+  updatePlan: (id: string, input: UpdatePlanInput) =>
+    send<Plan>("PATCH", `/plans/${id}`, input),
+
+  createDay: (planId: string, input: CreateDayInput) =>
+    send<Day>("POST", `/plans/${planId}/days`, input),
   updateDay: (id: string, input: UpdateDayInput) =>
-    request<Day>(`/days/${id}`, {
-      method: "PATCH",
-      body: JSON.stringify(input),
-    }),
+    send<Day>("PATCH", `/days/${id}`, input),
+  deleteDay: (id: string) => send<void>("DELETE", `/days/${id}`),
+
+  createTask: (dayId: string, input: CreateTaskInput) =>
+    send<Task>("POST", `/days/${dayId}/tasks`, input),
   updateTask: (id: string, input: UpdateTaskInput) =>
-    request<Task>(`/tasks/${id}`, {
-      method: "PATCH",
-      body: JSON.stringify(input),
-    }),
+    send<Task>("PATCH", `/tasks/${id}`, input),
+  deleteTask: (id: string) => send<void>("DELETE", `/tasks/${id}`),
 };
