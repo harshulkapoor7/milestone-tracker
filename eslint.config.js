@@ -21,6 +21,13 @@ export default tseslint.config(
       },
       globals: { ...globals.node },
     },
+    rules: {
+      // Convention: a leading underscore means "unused on purpose" (e.g. Express's _next).
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+      ],
+    },
   },
 
   // Plain .js files (like this config) aren't part of any tsconfig, so skip type-aware rules.
