@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { createDay } from "../days/days.controller";
+import { getStats } from "../stats/stats.controller";
 import * as plans from "./plans.controller";
 
 export const plansRouter = Router();
@@ -9,3 +10,4 @@ plansRouter.post("/", plans.createPlan);
 plansRouter.get("/:id", plans.getPlan);
 plansRouter.patch("/:id", plans.updatePlan);
 plansRouter.post("/:id/days", createDay); // a new day always belongs to a plan
+plansRouter.get("/:id/stats", getStats);
