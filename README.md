@@ -27,7 +27,7 @@ cp .env.example .env     # then set your own POSTGRES_PASSWORD (and match it in 
 npm run db:up            # starts PostgreSQL in Docker and waits until it's ready
 npm run db:migrate       # creates the tables
 npm run db:seed          # adds a demo user with the 60-day plan
-npm run dev              # runs the API with auto-restart on save
+npm run dev              # runs the API (:3000) and the web app (:5173) together
 ```
 
 ## API
@@ -53,7 +53,7 @@ development uses the seeded demo user; tests send an `x-user-id` header.
 
 | Command                | What it does                                      |
 | ---------------------- | ------------------------------------------------- |
-| `npm run dev`          | Start the API in watch mode                       |
+| `npm run dev`          | Start API + web app (open http://localhost:5173)  |
 | `npm run typecheck`    | Type-check every workspace                        |
 | `npm test`             | Run API tests (uses a separate `_test` database)  |
 | `npm run lint`         | Find bugs and risky patterns with ESLint          |

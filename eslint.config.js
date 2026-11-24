@@ -3,6 +3,7 @@ import js from "@eslint/js";
 import tseslint from "typescript-eslint";
 import globals from "globals";
 import prettier from "eslint-config-prettier";
+import reactHooks from "eslint-plugin-react-hooks";
 
 export default tseslint.config(
   // 1. Never lint generated or third-party files.
@@ -28,6 +29,13 @@ export default tseslint.config(
         { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
       ],
     },
+  },
+
+  // The web app runs in the browser and uses React hooks.
+  {
+    files: ["apps/web/**/*.{ts,tsx}"],
+    ...reactHooks.configs.flat.recommended,
+    languageOptions: { globals: { ...globals.browser } },
   },
 
   // Tests inspect untyped JSON responses (Supertest's res.body is `any`) on purpose.
