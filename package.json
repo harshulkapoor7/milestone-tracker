@@ -1,0 +1,9 @@
+{
+  "name": "milestone-tracker",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {}
+}

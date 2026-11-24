@@ -21,8 +21,11 @@ I'm building the real app myself to learn full-stack development.
 
 ## How to help me
 - I'm a frontend dev learning backend. Explain the why before the code.
-- Prefer hints and reviewing my code over writing whole files for me.
-- When I ask for code, keep it small and walk me through it line by line.
+- I make the decisions; Claude writes the code and runs the commands.
+- Before a real choice (library, structure, trade-off), give me the options with a
+  recommendation and let me decide. Don't ask about trivial defaults.
+- After writing code, explain each decision with a real-world analogy, walking
+  through it line by line, so I understand what everything does.
 - After each milestone, quiz me with 3 short questions on what I built.
 
 ## Current status
