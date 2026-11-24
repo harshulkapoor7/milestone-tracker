@@ -47,10 +47,22 @@ Context for Claude Code, so we can continue where the chat left off.
     random password); `.env.example` committed. Scripts: db:up/down/logs/psql.
   - README: getting started + scripts table.
 
+- Milestone 2 built on branch `feat/api-skeleton`:
+  - Express 5 app in `apps/api/src/app.ts` (`createApp()`, no listen → testable), started by `index.ts`.
+  - `env.ts`: Zod-validated env (NODE_ENV, PORT, LOG_LEVEL, DATABASE_URL); exits on bad config.
+    Loaded with Node's `--env-file-if-exists=../../.env` (no dotenv).
+  - `logger.ts`: Pino; pino-pretty in dev, JSON in prod, silent in test. pino-http logs
+    method/url/status only; 4xx = warn, 5xx = error.
+  - `middleware/error-handler.ts`: AppError → its status; ZodError → 400; Express 4xx
+    (e.g. bad JSON) → 400; anything else → 500 with a generic message (details only in logs).
+  - `modules/health/`: routes → controller → service. `GET /health` → `{status, uptimeSeconds, timestamp}`.
+
 ## Decisions log
 
 - Package scope `@milestone/…` · TS runner `tsx` · ESLint + Prettier (not Biome)
 - TypeScript 6 instead of 7 (tool compatibility) · Docker Desktop (not OrbStack)
+- Logging: Pino (+ pino-http, pino-pretty) · ESLint: `_`-prefixed vars may be unused
+- Node 26 pinned in `.nvmrc` (engines >=22.9). nvm default was 18 → run `nvm use` / `nvm alias default 26`.
 
 ## Open questions for later
 
@@ -60,6 +72,6 @@ Context for Claude Code, so we can continue where the chat left off.
 
 ## Next
 
-1. ~~Merge Milestone 1 PR and tick it~~ (done).
-2. Milestone 2 (API skeleton) on a new branch: Express app, `/health` route,
-   env validation with Zod, central error handler, logging.
+1. Open + merge the PR for `feat/api-skeleton`, tick Milestone 2 in docs/plan.md.
+2. Milestone 3 (database): Drizzle schema (users, sessions, plans, phases, days, tasks),
+   first migration, seed script for the 60-day plan. Add a DB ping to the health service.
