@@ -25,16 +25,41 @@ Context for Claude Code, so we can continue where the chat left off.
 - tasks.done_at timestamp instead of a done boolean (enables streaks/history).
 - One branch + one PR per milestone; conventional commit messages.
 
+## Working style (changed 24 Nov 2026)
+
+- I make the decisions; Claude writes the code, runs commands, and explains each
+  decision with a real-world analogy. See "How to help me" in CLAUDE.md.
+
 ## Done so far
 
 - Installed Claude Code, fixed PATH, logged in with Claude Pro.
-- Renamed folder to milestone-tracker, ran git init.
-- Created: .gitignore, CLAUDE.md, README.md, docs/plan.md, docs/prototype.html,
-  .gitkeep in apps/api, apps/web, packages/shared.
+- Created .gitignore, CLAUDE.md, README.md, docs/plan.md, docs/prototype.html.
+- First commit pushed to https://github.com/harshulkapoor7/milestone-tracker (main).
+  - Git pushes use a fine-grained GitHub token (Contents: read/write, this repo only),
+    saved in macOS Keychain. Remote URL includes `harshulkapoor7@` so the right account is used.
+- Milestone 1 built on branch `chore/repo-setup` (pushed, PR not yet merged):
+  - npm workspaces: `@milestone/api`, `@milestone/web`, `@milestone/shared` (ES modules).
+  - TypeScript 6.0 (pinned `~6.0.3`; TS 7 not yet supported by typescript-eslint),
+    shared `tsconfig.base.json`, `noEmit` (tsc only type-checks), `tsx watch` runs the API.
+  - `packages/shared` exports TS source directly (`exports: ./src/index.ts`), has TASK_TYPES.
+  - ESLint flat config with type-aware rules + Prettier (defaults), VS Code extension recs.
+  - Postgres 18 (alpine) via `compose.yaml`; values from root `.env` (gitignored,
+    random password); `.env.example` committed. Scripts: db:up/down/logs/psql.
+  - README: getting started + scripts table.
+
+## Decisions log
+
+- Package scope `@milestone/…` · TS runner `tsx` · ESLint + Prettier (not Biome)
+- TypeScript 6 instead of 7 (tool compatibility) · Docker Desktop (not OrbStack)
+
+## Open questions for later
+
+- Milestone 8: how the API runs in production (bundle with tsup/esbuild vs tsx/Node).
+- npm blocked install scripts for esbuild and fsevents; both work without them.
+- apps/web has only a package.json; Vite scaffolding happens in Milestone 5.
 
 ## Next
 
-1. First commit, create empty GitHub repo `milestone-tracker`, push to main.
-2. Milestone 1 (repo setup): npm workspaces, TypeScript config, ESLint + Prettier,
-   Docker Compose for Postgres (Docker Desktop for Apple Silicon), README.
-   Teach me one step at a time and check my work after each.
+1. Open the PR for `chore/repo-setup` on GitHub, merge it, then tick Milestone 1 in docs/plan.md.
+2. Milestone 2 (API skeleton) on a new branch: Express app, `/health` route,
+   env validation with Zod, central error handler, logging.
