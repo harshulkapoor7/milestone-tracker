@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { PlanDetail } from "@milestone/shared";
+import type { PlanDetail, UpdateDayInput } from "@milestone/shared";
 import { api } from "./api";
 
 // Query keys name each piece of cached data, like labels on storage boxes.
@@ -57,5 +57,29 @@ export function useToggleTask(planId: string) {
 
     // Either way, re-sync with the server's truth (e.g. its exact doneAt).
     onSettled: () => queryClient.invalidateQueries({ queryKey: key }),
+  });
+}
+
+// Saves day fields (e.g. the note). On success we copy the server's version of the
+// day into the cache, instead of refetching the whole 60-day plan for every save.
+export function useUpdateDay(planId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ dayId, input }: { dayId: string; input: UpdateDayInput }) =>
+      api.updateDay(dayId, input),
+
+    onSuccess: (saved) => {
+      queryClient.setQueryData<PlanDetail>(
+        keys.plan(planId),
+        (plan) =>
+          plan && {
+            ...plan,
+            days: plan.days.map((day) =>
+              day.id === saved.id ? { ...day, ...saved } : day,
+            ),
+          },
+      );
+    },
   });
 }

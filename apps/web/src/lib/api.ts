@@ -1,7 +1,9 @@
 import type {
+  Day,
   Plan,
   PlanDetail,
   Task,
+  UpdateDayInput,
   UpdateTaskInput,
 } from "@milestone/shared";
 
@@ -41,6 +43,11 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 export const api = {
   listPlans: () => request<Plan[]>("/plans"),
   getPlan: (id: string) => request<PlanDetail>(`/plans/${id}`),
+  updateDay: (id: string, input: UpdateDayInput) =>
+    request<Day>(`/days/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(input),
+    }),
   updateTask: (id: string, input: UpdateTaskInput) =>
     request<Task>(`/tasks/${id}`, {
       method: "PATCH",

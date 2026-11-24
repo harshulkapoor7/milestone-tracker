@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { DayCard } from "./components/DayCard";
+import { FilterBar } from "./components/FilterBar";
 import { MetroMap } from "./components/MetroMap";
 import { PhaseLegend } from "./components/PhaseLegend";
 import { StatsRow } from "./components/StatsRow";
@@ -9,6 +10,7 @@ import {
   phaseColor,
   planStats,
 } from "./lib/progress";
+import { dayMatches, NO_FILTERS, type Filters } from "./lib/filters";
 import { usePlan, usePlans, useToggleTask } from "./lib/queries";
 
 export function App() {
@@ -20,6 +22,7 @@ export function App() {
   // Which days are expanded. null = "not touched yet" → only today is open.
   // (Hooks must run on every render, so this lives above the early returns.)
   const [openDays, setOpenDays] = useState<Set<number> | null>(null);
+  const [filters, setFilters] = useState<Filters>(NO_FILTERS);
 
   if (plans.isPending || (planId && plan.isPending)) {
     return <Message>Loading your plan…</Message>;
@@ -44,6 +47,9 @@ export function App() {
   const stats = planStats(data);
   const today = currentDayIndex(data.startDate, data.days.length);
   const phasePosition = new Map(data.phases.map((p) => [p.id, p.position]));
+  const visibleDays = data.days
+    .map((day, index) => ({ day, index }))
+    .filter(({ day }) => dayMatches(day, filters));
   const isOpen = (i: number) => (openDays ?? new Set([today])).has(i);
 
   const setDayOpen = (i: number, open: boolean) => {
@@ -57,6 +63,7 @@ export function App() {
 
   // Open a day and scroll to it (used by the map and "Go to today").
   const goToDay = (i: number) => {
+    setFilters(NO_FILTERS); // make sure the day isn't hidden by a filter
     setDayOpen(i, true);
     // Wait one tick so React has rendered the opened card before scrolling.
     setTimeout(() => {
@@ -97,25 +104,38 @@ export function App() {
       </header>
 
       <main className="px-[max(5vw,16px)] pb-12">
-        <div className="mx-auto grid max-w-[1240px] gap-2.5">
-          {data.days.map((day, i) => (
-            <DayCard
-              key={day.id}
-              day={day}
-              number={i + 1}
-              date={dayDate(data.startDate, i)}
-              isToday={i === today}
-              color={phaseColor(phasePosition.get(day.phaseId ?? "") ?? 0)}
-              open={isOpen(i)}
-              onOpenChange={(open) => setDayOpen(i, open)}
-              onToggleTask={(task) =>
-                toggleTask.mutate({
-                  taskId: task.id,
-                  done: task.doneAt === null,
-                })
-              }
-            />
-          ))}
+        <div className="mx-auto max-w-[1240px]">
+          <FilterBar
+            phases={data.phases}
+            filters={filters}
+            onChange={setFilters}
+          />
+          <div className="mt-4 grid gap-2.5">
+            {visibleDays.length === 0 && (
+              <p className="rounded-2xl border-[1.5px] border-dashed border-line p-7 text-center text-mute">
+                No days match these filters.
+              </p>
+            )}
+            {visibleDays.map(({ day, index: i }) => (
+              <DayCard
+                key={day.id}
+                planId={data.id}
+                day={day}
+                number={i + 1}
+                date={dayDate(data.startDate, i)}
+                isToday={i === today}
+                color={phaseColor(phasePosition.get(day.phaseId ?? "") ?? 0)}
+                open={isOpen(i)}
+                onOpenChange={(open) => setDayOpen(i, open)}
+                onToggleTask={(task) =>
+                  toggleTask.mutate({
+                    taskId: task.id,
+                    done: task.doneAt === null,
+                  })
+                }
+              />
+            ))}
+          </div>
         </div>
       </main>
     </>

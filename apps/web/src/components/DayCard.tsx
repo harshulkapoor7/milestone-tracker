@@ -1,10 +1,12 @@
 import type { PlanDetail, Task } from "@milestone/shared";
 import { isDayDone, isTaskDone } from "../lib/progress";
+import { DayNotes } from "./DayNotes";
 import { ProgressBar } from "./StatsRow";
 
 type Day = PlanDetail["days"][number];
 
 interface DayCardProps {
+  planId: string;
   day: Day;
   number: number; // 1-based, for display
   date: string; // e.g. "24 Nov"
@@ -18,6 +20,7 @@ interface DayCardProps {
 // One collapsible day: header with progress, then its tasks.
 // "Controlled": the parent decides if it's open, so the map can open it too.
 export function DayCard({
+  planId,
   day,
   number,
   date,
@@ -62,29 +65,37 @@ export function DayCard({
         </div>
       </summary>
 
-      <ul className="grid gap-1 px-4 pb-4">
-        {day.tasks.map((task) => (
-          <li key={task.id}>
-            <label className="flex cursor-pointer items-start gap-2.5 py-2">
-              <input
-                type="checkbox"
-                className="mt-0.5 size-5 flex-none cursor-pointer accent-l3"
-                checked={isTaskDone(task)}
-                onChange={() => onToggleTask(task)}
-              />
-              <TypeTag type={task.type} />
-              <span
-                className={`flex-1 ${isTaskDone(task) ? "text-mute line-through" : ""}`}
-              >
-                {task.text}
-              </span>
-              <span className="text-[13px] whitespace-nowrap text-mute">
-                {task.minutes} min
-              </span>
-            </label>
-          </li>
-        ))}
-      </ul>
+      <div className="px-4 pb-4">
+        <ul className="grid gap-1">
+          {day.tasks.map((task) => (
+            <li key={task.id}>
+              <label className="flex cursor-pointer items-start gap-2.5 py-2">
+                <input
+                  type="checkbox"
+                  className="mt-0.5 size-5 flex-none cursor-pointer accent-l3"
+                  checked={isTaskDone(task)}
+                  onChange={() => onToggleTask(task)}
+                />
+                <TypeTag type={task.type} />
+                <span
+                  className={`flex-1 ${isTaskDone(task) ? "text-mute line-through" : ""}`}
+                >
+                  {task.text}
+                </span>
+                <span className="text-[13px] whitespace-nowrap text-mute">
+                  {task.minutes} min
+                </span>
+              </label>
+            </li>
+          ))}
+        </ul>
+        <DayNotes
+          planId={planId}
+          dayId={day.id}
+          dayNumber={number}
+          initialNote={day.note}
+        />
+      </div>
     </details>
   );
 }
