@@ -30,12 +30,32 @@ npm run db:seed          # adds a demo user with the 60-day plan
 npm run dev              # runs the API with auto-restart on save
 ```
 
+## API
+
+All routes except `/health` act as the current user. Until login exists (Milestone 6),
+development uses the seeded demo user; tests send an `x-user-id` header.
+
+| Method | Path              | What it does                                 |
+| ------ | ----------------- | -------------------------------------------- |
+| GET    | `/health`         | Server + database status                     |
+| GET    | `/plans`          | Your plans                                   |
+| POST   | `/plans`          | Create a plan (optionally with phase names)  |
+| GET    | `/plans/:id`      | One plan with phases, days and tasks         |
+| PATCH  | `/plans/:id`      | Rename or change start date                  |
+| POST   | `/plans/:id/days` | Add a day at the end                         |
+| PATCH  | `/days/:id`       | Edit title, note, phase or position          |
+| DELETE | `/days/:id`       | Delete a day and its tasks                   |
+| POST   | `/days/:id/tasks` | Add a task to a day                          |
+| PATCH  | `/tasks/:id`      | Edit a task; `{ "done": true }` ticks it off |
+| DELETE | `/tasks/:id`      | Delete a task                                |
+
 ## Scripts
 
 | Command                | What it does                                      |
 | ---------------------- | ------------------------------------------------- |
 | `npm run dev`          | Start the API in watch mode                       |
 | `npm run typecheck`    | Type-check every workspace                        |
+| `npm test`             | Run API tests (uses a separate `_test` database)  |
 | `npm run lint`         | Find bugs and risky patterns with ESLint          |
 | `npm run format`       | Format all files with Prettier                    |
 | `npm run format:check` | Check formatting without changing files (for CI)  |
