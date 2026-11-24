@@ -18,9 +18,13 @@ describe("plans", () => {
       "Frontend",
     ]);
 
+    // Every new user starts with the sample plan, so now there are two.
     const list = await alice.get("/plans");
     expect(list.status).toBe(200);
-    expect(list.body).toHaveLength(1);
+    expect(list.body.map((p: { title: string }) => p.title)).toEqual([
+      "60-Day Full-Stack Sprint",
+      "My sprint",
+    ]);
   });
 
   it("returns the full plan with days and tasks in order", async () => {
@@ -78,7 +82,13 @@ describe("plans", () => {
     expect(
       (await bob.patch(`/plans/${plan.id}`, { title: "Hacked" })).status,
     ).toBe(404);
-    expect((await bob.get("/plans")).body).toEqual([]);
+    // Bob only ever sees his own plans (his sample plan), never Alice's.
+    const bobsPlans = (await bob.get("/plans")).body as {
+      id: string;
+      userId: string;
+    }[];
+    expect(bobsPlans.map((p) => p.id)).not.toContain(plan.id);
+    expect(bobsPlans.every((p) => p.userId === bob.user.id)).toBe(true);
   });
 
   it("requires a user", async () => {
