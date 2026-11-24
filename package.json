@@ -10,7 +10,11 @@
     "typecheck": "npm run typecheck --workspaces --if-present",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "db:up": "docker compose up -d --wait",
+    "db:down": "docker compose down",
+    "db:logs": "docker compose logs -f db",
+    "db:psql": "docker compose exec db sh -c \"psql -U \\$POSTGRES_USER -d \\$POSTGRES_DB\""
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
