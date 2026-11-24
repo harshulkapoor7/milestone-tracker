@@ -83,7 +83,7 @@ Context for Claude Code, so we can continue where the chat left off.
     (created + migrated by global-setup), tables truncated before each test, files run serially.
   - ESLint: no-unsafe-* rules off for test files only (Supertest bodies are `any`).
 
-- Milestone 5 IN PROGRESS on branch `feat/frontend` (steps 1–2 of ~4 done):
+- Milestone 5 IN PROGRESS on branch `feat/frontend` (steps 1–3 of ~4 done):
   - apps/web: Vite 8 + React 19 + Tailwind 4 + TanStack Query 5. `npm run dev` (root) runs
     api + web together via concurrently. Vite proxies `/api/*` → `localhost:3000/*`.
   - Response types (`Plan`, `PlanDetail`, `Task`…) in `packages/shared/src/types.ts`.
@@ -95,8 +95,11 @@ Context for Claude Code, so we can continue where the chat left off.
   - Step 2: `MetroMap.tsx` (SVG, ResizeObserver via `useElementWidth`, rows snake per
     phase, click station → open + scroll), `PhaseLegend.tsx`, "Go to today", day dates.
     Day open state lifted to App (controlled `<details>`). Phone layout: meta on own line.
-  - Remaining for M5: phase filters + search + hide done, day notes, edit mode
-    (add/rename/delete days & tasks), plan settings.
+  - Step 3: sticky `FilterBar` (phase tabs, hide done, search over title/note/tasks;
+    logic in `lib/filters.ts`), `DayNotes` autosave debounced 800 ms + save on blur,
+    `useUpdateDay` writes the saved day into the cache (no full refetch).
+  - Remaining for M5: edit mode (add/rename/delete days & tasks, change phase/minutes),
+    plan settings (title, start date).
 
 ## Decisions log
 
@@ -105,7 +108,7 @@ Context for Claude Code, so we can continue where the chat left off.
 - Logging: Pino (+ pino-http, pino-pretty) · ESLint: `_`-prefixed vars may be unused
 - IDs: UUIDv7 (not serial integers) · Driver: `pg` (node-postgres)
 - Tests: separate test DB in same container · Pre-auth: temporary current-user middleware
-- Frontend → API in dev: Vite proxy (not CORS)
+- Frontend → API in dev: Vite proxy (not CORS) · Notes: debounced autosave
 - Node 26 pinned in `.nvmrc` (engines >=22.9). nvm default was 18 → run `nvm use` / `nvm alias default 26`.
 
 ## Open questions for later
@@ -126,5 +129,5 @@ Context for Claude Code, so we can continue where the chat left off.
 
 ## Next
 
-1. Milestone 5 step 3: sticky filter bar (phases, hide done, search) + day notes.
-2. Then edit mode; then PR for `feat/frontend`.
+1. Milestone 5 step 4: edit mode + plan settings (needs POST/DELETE API calls in web).
+2. Then PR for `feat/frontend`.
