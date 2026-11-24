@@ -62,6 +62,7 @@ Context for Claude Code, so we can continue where the chat left off.
 - Package scope `@milestone/…` · TS runner `tsx` · ESLint + Prettier (not Biome)
 - TypeScript 6 instead of 7 (tool compatibility) · Docker Desktop (not OrbStack)
 - Logging: Pino (+ pino-http, pino-pretty) · ESLint: `_`-prefixed vars may be unused
+- Node 26 pinned in `.nvmrc` (engines >=22.9). nvm default was 18 → run `nvm use` / `nvm alias default 26`.
 
 ## Open questions for later
 
