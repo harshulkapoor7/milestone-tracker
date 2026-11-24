@@ -83,7 +83,7 @@ Context for Claude Code, so we can continue where the chat left off.
     (created + migrated by global-setup), tables truncated before each test, files run serially.
   - ESLint: no-unsafe-* rules off for test files only (Supertest bodies are `any`).
 
-- Milestone 5 IN PROGRESS on branch `feat/frontend` (steps 1–3 of ~4 done):
+- Milestone 5 built on branch `feat/frontend` (all 4 steps, PR open):
   - apps/web: Vite 8 + React 19 + Tailwind 4 + TanStack Query 5. `npm run dev` (root) runs
     api + web together via concurrently. Vite proxies `/api/*` → `localhost:3000/*`.
   - Response types (`Plan`, `PlanDetail`, `Task`…) in `packages/shared/src/types.ts`.
@@ -98,8 +98,12 @@ Context for Claude Code, so we can continue where the chat left off.
   - Step 3: sticky `FilterBar` (phase tabs, hide done, search over title/note/tasks;
     logic in `lib/filters.ts`), `DayNotes` autosave debounced 800 ms + save on blur,
     `useUpdateDay` writes the saved day into the cache (no full refetch).
-  - Remaining for M5: edit mode (add/rename/delete days & tasks, change phase/minutes),
-    plan settings (title, start date).
+  - Step 4: "Edit plan" toggle. `usePlanEditor` (mutations that refetch on settle),
+    `EditableText` (save on Enter/blur, Escape cancels, `isValid` snaps back),
+    `ConfirmButton` (click twice to delete, disarms after 3 s), `TaskEditRow`,
+    "Add day" (same phase as last day), `PlanSettings` (title, start date).
+  - Not ported from the prototype on purpose: localStorage backup/restore code (data now
+    lives in Postgres); renaming phases (no phases endpoint yet; add if wanted).
 
 ## Decisions log
 
@@ -127,7 +131,13 @@ Context for Claude Code, so we can continue where the chat left off.
   (2) Why does the client send `{ done: true }` instead of a `doneAt` timestamp?
   (3) Why do tests use a separate `_test` database, and why are tables emptied before each test?
 
+- Milestone 5: (1) What's the difference between an optimistic update (ticking a task)
+  and refetch-after-save (edit mode), and why use each where we did?
+  (2) Why does the notes box use a `useRef` for `lastSaved` instead of `useState`?
+  (3) What does the Vite proxy do, and why does it matter for Milestone 6 cookies?
+
 ## Next
 
-1. Milestone 5 step 4: edit mode + plan settings (needs POST/DELETE API calls in web).
-2. Then PR for `feat/frontend`.
+1. Open + merge the PR for `feat/frontend`, tick Milestone 5 in docs/plan.md.
+2. Milestone 6 (auth): register / login / logout, password hashing, sessions table +
+   httpOnly cookie, replace `middleware/current-user.ts`, login screen in web.
