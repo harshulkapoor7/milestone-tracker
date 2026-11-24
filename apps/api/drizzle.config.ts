@@ -1,10 +1,12 @@
 import { defineConfig } from "drizzle-kit";
 
 // drizzle-kit is a separate CLI, so it loads the root .env itself.
+// Only a missing .env is OK (e.g. in CI, where real env vars are set instead).
+// Any other error (like an old Node without loadEnvFile) must be shown, not hidden.
 try {
   process.loadEnvFile("../../.env");
-} catch {
-  // No .env file (e.g. in CI): rely on real environment variables.
+} catch (err) {
+  if ((err as NodeJS.ErrnoException).code !== "ENOENT") throw err;
 }
 
 if (!process.env.DATABASE_URL) {
