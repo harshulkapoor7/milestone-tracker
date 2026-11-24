@@ -123,7 +123,7 @@ Context for Claude Code, so we can continue where the chat left off.
   - Later (M8/M9): rate-limit /auth/login, `app.set("trust proxy")` for Secure cookies
     behind the host's proxy, periodic cleanup of expired sessions.
 
-- Milestone 7 built on branch `feat/stats`:
+- Milestone 7 merged in PR #7:
   - `GET /plans/:id/stats?tz=…` (`modules/stats/`): raw SQL via `db.execute(sql\`…\`)`.
 Queries: tasks by type (GROUP BY + FILTER), days done per phase (CTE: per-day status,
 then per-phase), activity per local date (`AT TIME ZONE`), streaks via gaps-and-islands
@@ -180,7 +180,7 @@ yesterday. `::text` on dates avoids pg → JS Date time-zone shifts.
 
 ## Next
 
-1. Open + merge the PR for `feat/stats`, tick Milestone 7 in docs/plan.md.
+1. ~~Merge Milestone 7 PR and tick it~~ (done).
 2. Milestone 8 (CI + deploy): GitHub Actions (lint, typecheck, test with a Postgres service),
    hosted Postgres, API host, Vercel for web. Decisions: hosts. Also: login rate limit,
    `trust proxy`, expired-session cleanup.

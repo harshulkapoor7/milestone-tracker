@@ -8,7 +8,7 @@ Each milestone = one branch + one PR into main. Tick it off when merged.
 - [x] **4. CRUD**: plans / days / tasks endpoints, Zod validation, Vitest + Supertest tests
 - [x] **5. Frontend**: rebuild docs/prototype.html in React, fetching from the API with TanStack Query
 - [x] **6. Auth**: register / login / logout, sessions, ownership checks on every query
-- [ ] **7. Stats & streaks**: computed in SQL (GROUP BY, window functions)
+- [x] **7. Stats & streaks**: computed in SQL (GROUP BY, window functions)
 - [ ] **8. CI + deploy**: GitHub Actions (lint, test, build), hosted Postgres, API host, Vercel for web
 - [ ] **9. Polish**: README with architecture diagram, screenshots, live link
 
