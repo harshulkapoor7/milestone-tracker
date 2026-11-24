@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+/* Design tokens copied from docs/prototype.html, so the app looks the same.
+   light-dark() picks the first colour in light mode, the second in dark mode. */
+:root {
+  color-scheme: light dark;
+}
+
+/* "static": always output every token as a CSS variable, even ones only used
+   from JavaScript (like the phase colours), not just ones used in class names. */
+@theme static {
+  --font-sans: Figtree, system-ui, sans-serif;
+
+  --color-bg: light-dark(#ffffff, #0e1116);
+  --color-ink: light-dark(#111418, #e9edf2);
+  --color-mute: light-dark(#5b6470, #9aa4b1);
+  --color-line: light-dark(#e4e7eb, #232a33);
+  --color-card: light-dark(#f6f7f9, #151a21);
+  --color-accent: light-dark(#0a5cff, #5b8fff);
+
+  /* One colour per phase, like metro lines */
+  --color-l0: #e6261f;
+  --color-l1: #0a5cff;
+  --color-l2: #ffb400;
+  --color-l3: #00a05a;
+
+  /* Task type tags */
+  --color-learn: light-dark(#0a5cff, #5b8fff);
+  --color-practice: light-dark(#b07a00, #ffb400);
+  --color-build: light-dark(#00804a, #22c27a);
+}
+
+body {
+  @apply bg-bg text-ink font-sans antialiased;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
