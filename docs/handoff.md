@@ -37,7 +37,7 @@ Context for Claude Code, so we can continue where the chat left off.
 - First commit pushed to https://github.com/harshulkapoor7/milestone-tracker (main).
   - Git pushes use a fine-grained GitHub token (Contents: read/write, this repo only),
     saved in macOS Keychain. Remote URL includes `harshulkapoor7@` so the right account is used.
-- Milestone 1 built on branch `chore/repo-setup` (pushed, PR not yet merged):
+- Milestone 1 built on branch `chore/repo-setup` (merged in PR #1):
   - npm workspaces: `@milestone/api`, `@milestone/web`, `@milestone/shared` (ES modules).
   - TypeScript 6.0 (pinned `~6.0.3`; TS 7 not yet supported by typescript-eslint),
     shared `tsconfig.base.json`, `noEmit` (tsc only type-checks), `tsx watch` runs the API.
@@ -60,6 +60,6 @@ Context for Claude Code, so we can continue where the chat left off.
 
 ## Next
 
-1. Open the PR for `chore/repo-setup` on GitHub, merge it, then tick Milestone 1 in docs/plan.md.
+1. ~~Merge Milestone 1 PR and tick it~~ (done).
 2. Milestone 2 (API skeleton) on a new branch: Express app, `/health` route,
    env validation with Zod, central error handler, logging.

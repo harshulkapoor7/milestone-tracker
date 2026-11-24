@@ -33,4 +33,4 @@ I'm building the real app myself to learn full-stack development.
 
 ## Current status
 
-- Milestone: 1 (repo setup), built, PR open. Next: Milestone 2 (API skeleton)
+- Milestone 1 done (merged). Next: Milestone 2 (API skeleton)
