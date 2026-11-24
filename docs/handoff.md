@@ -83,7 +83,7 @@ Context for Claude Code, so we can continue where the chat left off.
     (created + migrated by global-setup), tables truncated before each test, files run serially.
   - ESLint: no-unsafe-* rules off for test files only (Supertest bodies are `any`).
 
-- Milestone 5 built on branch `feat/frontend` (all 4 steps, PR open):
+- Milestone 5 merged in PR #5:
   - apps/web: Vite 8 + React 19 + Tailwind 4 + TanStack Query 5. `npm run dev` (root) runs
     api + web together via concurrently. Vite proxies `/api/*` → `localhost:3000/*`.
   - Response types (`Plan`, `PlanDetail`, `Task`…) in `packages/shared/src/types.ts`.
@@ -138,6 +138,6 @@ Context for Claude Code, so we can continue where the chat left off.
 
 ## Next
 
-1. Open + merge the PR for `feat/frontend`, tick Milestone 5 in docs/plan.md.
+1. ~~Merge Milestone 5 PR and tick it~~ (done).
 2. Milestone 6 (auth): register / login / logout, password hashing, sessions table +
    httpOnly cookie, replace `middleware/current-user.ts`, login screen in web.
