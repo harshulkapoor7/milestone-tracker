@@ -1,4 +1,3 @@
-// Shared between api and web. Matches tasks.type in docs/plan.md.
-export const TASK_TYPES = ["learn", "practice", "build"] as const;
-
-export type TaskType = (typeof TASK_TYPES)[number];
+// Public entry point of @milestone/shared: everything api and web may import.
+export * from "./constants";
+export * from "./schemas";

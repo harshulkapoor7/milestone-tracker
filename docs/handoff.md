@@ -70,12 +70,26 @@ Context for Claude Code, so we can continue where the chat left off.
     1 plan, 4 phases, 60 days, 180 tasks, copied from the prototype. Idempotent, in a transaction.
   - `/health` now pings the DB: 200 ok / 503 degraded.
 
+- Milestone 4 built on branch `feat/crud`:
+  - Zod request schemas in `packages/shared/src/schemas.ts` (TASK_TYPES moved to
+    `constants.ts` to avoid a circular import). PATCH bodies must have ≥1 field.
+  - Tasks take `{ done: boolean }`; the server sets/clears `done_at`.
+  - `middleware/current-user.ts` (TEMPORARY until M6): prod → 401; `x-user-id` header;
+    dev falls back to demo user. Controllers use `requireUserId(req)`.
+  - Modules plans/days/tasks (routes → controller → service). Ownership via joins up to
+    `plans.user_id`; other users' resources → 404. New days/tasks append (max position + 1).
+  - Drizzle relations added (no migration) for `GET /plans/:id` nested load.
+  - Vitest + Supertest: 18 tests in `apps/api/test/`. Separate DB `milestone_tracker_test`
+    (created + migrated by global-setup), tables truncated before each test, files run serially.
+  - ESLint: no-unsafe-* rules off for test files only (Supertest bodies are `any`).
+
 ## Decisions log
 
 - Package scope `@milestone/…` · TS runner `tsx` · ESLint + Prettier (not Biome)
 - TypeScript 6 instead of 7 (tool compatibility) · Docker Desktop (not OrbStack)
 - Logging: Pino (+ pino-http, pino-pretty) · ESLint: `_`-prefixed vars may be unused
 - IDs: UUIDv7 (not serial integers) · Driver: `pg` (node-postgres)
+- Tests: separate test DB in same container · Pre-auth: temporary current-user middleware
 - Node 26 pinned in `.nvmrc` (engines >=22.9). nvm default was 18 → run `nvm use` / `nvm alias default 26`.
 
 ## Open questions for later
@@ -92,6 +106,6 @@ Context for Claude Code, so we can continue where the chat left off.
 
 ## Next
 
-1. ~~Merge Milestone 3 PR and tick it~~ (done).
-2. Milestone 4 (CRUD): plans / days / tasks endpoints, Zod schemas in packages/shared,
-   Vitest + Supertest tests (needs a test database decision).
+1. Open + merge the PR for `feat/crud`, tick Milestone 4 in docs/plan.md.
+2. Milestone 5 (frontend): scaffold apps/web with Vite + React + Tailwind + TanStack Query,
+   rebuild docs/prototype.html against the API (dev uses the demo user fallback).

@@ -1,7 +1,11 @@
 import express from "express";
 import { pinoHttp } from "pino-http";
 import { logger } from "./logger";
+import { currentUser } from "./middleware/current-user";
+import { daysRouter } from "./modules/days/days.routes";
 import { healthRouter } from "./modules/health/health.routes";
+import { plansRouter } from "./modules/plans/plans.routes";
+import { tasksRouter } from "./modules/tasks/tasks.routes";
 import { errorHandler, notFound } from "./middleware/error-handler";
 
 // Builds the Express app without starting it, so tests (Milestone 4) can use it directly.
@@ -32,8 +36,14 @@ export function createApp() {
   );
   app.use(express.json()); //       2. parse JSON request bodies into req.body
 
-  // Routes
+  // Public routes (no user needed)
   app.use("/health", healthRouter);
+
+  // Everything below needs a current user
+  app.use(currentUser);
+  app.use("/plans", plansRouter);
+  app.use("/days", daysRouter);
+  app.use("/tasks", tasksRouter);
 
   // Must come after all routes
   app.use(notFound); //     no route matched → 404

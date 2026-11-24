@@ -5,9 +5,15 @@ import { eq } from "drizzle-orm";
 import { logger } from "../logger";
 import { db, pool } from "./client";
 import { days, phases, plans, tasks, users } from "./schema";
-import { BUILD, LEARN, PATTERNS, PHASES, PLAN_TITLE } from "./seed-data";
+import {
+  BUILD,
+  DEMO_EMAIL,
+  LEARN,
+  PATTERNS,
+  PHASES,
+  PLAN_TITLE,
+} from "./seed-data";
 
-const DEMO_EMAIL = "demo@milestone.local";
 const DAYS_PER_PHASE = 15;
 
 async function seed() {
