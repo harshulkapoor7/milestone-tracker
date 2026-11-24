@@ -105,7 +105,7 @@ Context for Claude Code, so we can continue where the chat left off.
   - Not ported from the prototype on purpose: localStorage backup/restore code (data now
     lives in Postgres); renaming phases (no phases endpoint yet; add if wanted).
 
-- Milestone 6 built on branch `feat/auth`:
+- Milestone 6 merged in PR #6:
   - Argon2id via `@node-rs/argon2` (OWASP defaults m=19456,t=2,p=1, ~10 ms on M4).
   - `modules/auth/`: register (user + sample plan + session in one transaction; duplicate
     email → 409), login (dummy hash for unknown emails = no timing leak; same 401 message),
@@ -161,6 +161,6 @@ Context for Claude Code, so we can continue where the chat left off.
 
 ## Next
 
-1. Open + merge the PR for `feat/auth`, tick Milestone 6 in docs/plan.md.
+1. ~~Merge Milestone 6 PR and tick it~~ (done).
 2. Milestone 7 (stats & streaks): compute stats in SQL (GROUP BY, window functions),
    `GET /plans/:id/stats`, use it in the web app instead of `lib/progress.ts` maths.
