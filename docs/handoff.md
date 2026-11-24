@@ -57,11 +57,25 @@ Context for Claude Code, so we can continue where the chat left off.
     (e.g. bad JSON) → 400; anything else → 500 with a generic message (details only in logs).
   - `modules/health/`: routes → controller → service. `GET /health` → `{status, uptimeSeconds, timestamp}`.
 
+- Milestone 3 built on branch `feat/database`:
+  - Drizzle ORM + `pg` Pool (`src/db/client.ts`, `casing: "snake_case"`). Pool has an
+    `error` listener; without it a DB restart crashed the API (found by testing).
+  - `src/db/schema.ts`: users, sessions, plans, phases, days, tasks. UUIDv7 ids
+    (`default uuidv7()`, native in Postgres 18). `task_type` pgEnum built from shared TASK_TYPES.
+    FKs cascade on delete (days.phase_id → set null). Indexes on every FK (+ position).
+    `tasks.done_at` timestamptz null; CHECK minutes >= 0; unique users.email.
+  - Migration `apps/api/drizzle/0000_init.sql` (committed). Generate with
+    `npx drizzle-kit generate --name <name>` inside apps/api for readable names.
+  - `npm run db:seed`: demo user `demo@milestone.local` (password_hash "!" = can't log in yet),
+    1 plan, 4 phases, 60 days, 180 tasks, copied from the prototype. Idempotent, in a transaction.
+  - `/health` now pings the DB: 200 ok / 503 degraded.
+
 ## Decisions log
 
 - Package scope `@milestone/…` · TS runner `tsx` · ESLint + Prettier (not Biome)
 - TypeScript 6 instead of 7 (tool compatibility) · Docker Desktop (not OrbStack)
 - Logging: Pino (+ pino-http, pino-pretty) · ESLint: `_`-prefixed vars may be unused
+- IDs: UUIDv7 (not serial integers) · Driver: `pg` (node-postgres)
 - Node 26 pinned in `.nvmrc` (engines >=22.9). nvm default was 18 → run `nvm use` / `nvm alias default 26`.
 
 ## Open questions for later
@@ -72,6 +86,6 @@ Context for Claude Code, so we can continue where the chat left off.
 
 ## Next
 
-1. ~~Merge Milestone 2 PR and tick it~~ (done).
-2. Milestone 3 (database): Drizzle schema (users, sessions, plans, phases, days, tasks),
-   first migration, seed script for the 60-day plan. Add a DB ping to the health service.
+1. Open + merge the PR for `feat/database`, tick Milestone 3 in docs/plan.md.
+2. Milestone 4 (CRUD): plans / days / tasks endpoints, Zod schemas in packages/shared,
+   Vitest + Supertest tests (needs a test database decision).
