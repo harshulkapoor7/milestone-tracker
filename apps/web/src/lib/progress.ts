@@ -65,3 +65,10 @@ export function planStats(plan: PlanDetail) {
 
 // Phase position → its metro-line colour (cycles if there are more than 4).
 export const phaseColor = (position: number) => `var(--color-l${position % 4})`;
+
+// Day index → its calendar date, e.g. "24 Nov".
+export function dayDate(startDate: string, index: number) {
+  const date = new Date(`${startDate}T00:00:00`);
+  date.setDate(date.getDate() + index);
+  return date.toLocaleDateString(undefined, { day: "numeric", month: "short" });
+}

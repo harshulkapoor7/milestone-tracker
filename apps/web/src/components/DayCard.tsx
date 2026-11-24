@@ -7,31 +7,41 @@ type Day = PlanDetail["days"][number];
 interface DayCardProps {
   day: Day;
   number: number; // 1-based, for display
+  date: string; // e.g. "24 Nov"
   color: string;
   isToday: boolean;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   onToggleTask: (task: Task) => void;
 }
 
 // One collapsible day: header with progress, then its tasks.
+// "Controlled": the parent decides if it's open, so the map can open it too.
 export function DayCard({
   day,
   number,
+  date,
   color,
   isToday,
+  open,
+  onOpenChange,
   onToggleTask,
 }: DayCardProps) {
   const done = day.tasks.filter(isTaskDone).length;
-  const minutes = day.tasks.reduce((sum, t) => sum + t.minutes, 0);
   const pct = day.tasks.length
     ? Math.round((done / day.tasks.length) * 100)
     : 0;
 
   return (
     <details
-      open={isToday}
-      className={`rounded-2xl bg-card ${isToday ? "border-2 border-ink" : "border border-line"}`}
+      id={`day-${number}`}
+      open={open}
+      onToggle={(e) => {
+        if (e.currentTarget.open !== open) onOpenChange(e.currentTarget.open);
+      }}
+      className={`scroll-mt-20 rounded-2xl bg-card ${isToday ? "border-2 border-ink" : "border border-line"}`}
     >
-      <summary className="grid cursor-pointer list-none grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3.5 gap-y-1 px-4 py-3.5 [&::-webkit-details-marker]:hidden">
+      <summary className="grid cursor-pointer list-none grid-cols-[auto_minmax(0,1fr)] sm:grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3.5 gap-y-1 px-4 py-3.5 [&::-webkit-details-marker]:hidden">
         <span className="flex items-center gap-2 text-[15px] font-extrabold whitespace-nowrap">
           <i
             className="inline-block size-3 rounded-full border-[3px]"
@@ -43,11 +53,12 @@ export function DayCard({
           Day {number}
         </span>
         <span className="font-semibold">{day.title}</span>
-        <span className="text-right text-[13px] whitespace-nowrap text-mute">
-          {done}/{day.tasks.length} · {minutes} min
+        <span className="col-span-full text-left text-[13px] whitespace-nowrap text-mute sm:col-span-1 sm:text-right">
+          {date}
+          {isToday && " · today"} · {done}/{day.tasks.length}
         </span>
         <div className="col-span-full">
-          <ProgressBar pct={pct} />
+          <ProgressBar pct={pct} color={color} />
         </div>
       </summary>
 

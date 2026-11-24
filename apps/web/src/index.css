@@ -38,3 +38,18 @@ body {
   outline: 3px solid var(--color-accent);
   outline-offset: 2px;
 }
+
+/* Today's station on the map gently pulses (skipped if the user prefers less motion). */
+@media (prefers-reduced-motion: no-preference) {
+  .station-today {
+    animation: station-pulse 2s ease-in-out infinite;
+  }
+  @keyframes station-pulse {
+    50% {
+      stroke-width: 7;
+    }
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+}

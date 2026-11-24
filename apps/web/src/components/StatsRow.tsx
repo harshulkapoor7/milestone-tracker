@@ -48,10 +48,13 @@ export function StatsRow({ stats }: { stats: Stats }) {
   );
 }
 
-export function ProgressBar({ pct }: { pct: number }) {
+export function ProgressBar({ pct, color }: { pct: number; color?: string }) {
   return (
     <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line">
-      <i className="block h-full bg-ink" style={{ width: `${pct}%` }} />
+      <i
+        className="block h-full bg-ink"
+        style={{ width: `${pct}%`, background: color }}
+      />
     </div>
   );
 }
